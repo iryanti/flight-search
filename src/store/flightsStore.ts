@@ -6,13 +6,19 @@ type FlightsState = {
   loading: boolean;
   error: string | null;
 
+  selectedAirlines: string[];
+
   fetchFlights: () => Promise<void>;
+  toggleAirline: (code: string) => void;
+  resetFilters: () => void;
 };
 
-export const useFlightsStore = create<FlightsState>((set) => ({
+export const useFlightsStore = create<FlightsState>((set, get) => ({
   flights: [],
   loading: false,
   error: null,
+
+  selectedAirlines: [],
 
   fetchFlights: async () => {
     try {
@@ -25,4 +31,15 @@ export const useFlightsStore = create<FlightsState>((set) => ({
       set({ loading: false });
     }
   },
+  toggleAirline: (code) => {
+    const current = get().selectedAirlines;
+    const exists = current.includes(code);
+    set({
+      selectedAirlines: exists
+        ? current.filter((x) => x !== code)
+        : [...current, code],
+    });
+  },
+
+  resetFilters: () => set({ selectedAirlines: [] }),
 }));
