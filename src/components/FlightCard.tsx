@@ -122,14 +122,13 @@ export default function FlightCard({ f }: { f: any }) {
               </div>
             )}
           </div>
-
-          <button
-            className="px-6 py-3 rounded-xl text-white font-semibold w-full md:w-[180px]"
-            style={{ background: "var(--bc-primary)" }}
-          >
-            Choose
-          </button>
         </div>
+        <button
+          className="px-6 py-3 rounded-xl text-white font-semibold w-full md:w-[180px] cursor-pointer"
+          style={{ background: "var(--bc-primary)" }}
+        >
+          Choose
+        </button>
       </div>
     </div>
   );

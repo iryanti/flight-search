@@ -4,8 +4,15 @@ import { useMemo } from "react";
 import { useFlightsStore } from "@/store/flightsStore";
 
 export default function FilterSidebar() {
-  const { flights, selectedAirlines, toggleAirline, resetFilters } =
-    useFlightsStore();
+  const {
+    flights,
+    selectedAirlines,
+    toggleAirline,
+    resetFilters,
+    maxDuration,
+    setMaxDuration,
+    setAllAirlines,
+  } = useFlightsStore();
 
   const airlines = useMemo(() => {
     const map = new Map<
@@ -26,7 +33,7 @@ export default function FilterSidebar() {
     });
 
     return Array.from(map.values()).sort((a, b) =>
-      a.name.localeCompare(b.name)
+      a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
     );
   }, [flights]);
 
@@ -42,12 +49,34 @@ export default function FilterSidebar() {
           </h2>
 
           <button
-            className="text-sm font-semibold"
+            className="text-sm font-semibold cursor-pointer"
             style={{ color: "var(--bc-primary)" }}
             onClick={resetFilters}
           >
             Reset
           </button>
+        </div>
+
+        <div className="mt-6">
+          <div
+            className="text-sm font-semibold mb-2"
+            style={{ color: "var(--bc-text)" }}
+          >
+            Max Duration (minutes)
+          </div>
+
+          <input
+            type="number"
+            min={0}
+            className="w-full rounded-lg border px-3 py-2 text-sm"
+            style={{ borderColor: "var(--bc-border)" }}
+            placeholder="e.g. 180"
+            value={maxDuration ?? ""}
+            onChange={(e) => {
+              const value = e.target.value;
+              setMaxDuration(value ? Number(value) : null);
+            }}
+          />
         </div>
 
         <div className="mt-4">
@@ -58,13 +87,36 @@ export default function FilterSidebar() {
             Airlines
           </div>
 
+          <label className="flex items-center gap-2 mb-2 font-medium">
+            <input
+              type="checkbox"
+              checked={
+                selectedAirlines.length > 0 &&
+                selectedAirlines.length === airlines.length
+              }
+              ref={(el) => {
+                if (!el) return;
+                el.indeterminate =
+                  selectedAirlines.length > 0 &&
+                  selectedAirlines.length < airlines.length;
+              }}
+              onChange={(e) => {
+                if (e.target.checked) {
+                  setAllAirlines(airlines.map((a) => a.code));
+                } else {
+                  setAllAirlines([]);
+                }
+              }}
+            />
+            <span>Select all</span>
+          </label>
+
           <div
             className="space-y-2 text-sm"
             style={{ color: "var(--bc-muted)" }}
           >
             {airlines.map((a) => {
               const checked = selectedAirlines.includes(a.code);
-
               return (
                 <label
                   key={a.code}

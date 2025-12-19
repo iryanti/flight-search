@@ -7,20 +7,31 @@ import FilterSidebar from "./FilterSidebar";
 import SortBar from "./SortBar";
 
 export default function FlightsClient() {
-  const {
-    flights,
-    loading,
-    error,
-    fetchFlights,
-    selectedAirlines,
-  } = useFlightsStore();
+const { flights, loading, error, fetchFlights, selectedAirlines, sort, maxDuration } = useFlightsStore();
 
-  const filteredFlights = useMemo(() => {
-    if (selectedAirlines.length === 0) return flights;
-    return flights.filter((f: any) =>
-      selectedAirlines.includes(f.airline.code)
-    );
-  }, [flights, selectedAirlines]);
+
+const visibleFlights = useMemo(() => {
+  let list = flights;
+  if (selectedAirlines.length > 0) {
+    list = list.filter((f: any) => selectedAirlines.includes(f.airline.code));
+  }
+
+  if (maxDuration !== null) {
+    list = list.filter((f: any) => Number(f.duration) <= maxDuration);
+  }
+
+  const sorted = [...list];
+
+  if (sort === "price_asc") {
+    sorted.sort((a: any, b: any) => Number(a.price.amount) - Number(b.price.amount));
+  }
+
+  if (sort === "duration_asc") {
+    sorted.sort((a: any, b: any) => Number(a.duration) - Number(b.duration));
+  }
+
+  return sorted;
+}, [flights, selectedAirlines, sort, maxDuration]);
 
   useEffect(() => {
     fetchFlights();
@@ -38,7 +49,7 @@ export default function FlightsClient() {
           <SortBar />
 
           <div className="space-y-4">
-            {filteredFlights.map((f: any) => (
+            {visibleFlights.map((f: any) => (
               <FlightCard key={f.id} f={f} />
             ))}
           </div>
