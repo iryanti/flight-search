@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Flight Search App
+
+Frontend flight search application built as a take-home test.
 
 ## Getting Started
 
-First, run the development server:
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Display list of flights from API
+- Show airline logo, airline name, and flight number
+- Show departure and arrival time with airport code
+- Show flight duration and baggage allowance
+- Display price in IDR format with original price if available
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Filtering
 
-## Learn More
+- Filter flights by airline
+- Filter flights by price range
+- Filter flights by maximum duration
+- Filters update results in real time
+- Reset filters option
 
-To learn more about Next.js, take a look at the following resources:
+## Sorting
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Recommendation (default from API)
+- Lowest Price
+- Shortest Duration
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## UI & UX
 
-## Deploy on Vercel
+- Responsive layout for desktop and mobile
+- Mobile filter and sort using bottom sheet
+- Loading skeleton while fetching data
+- Error state with retry action
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js
+- TypeScript
+- Zustand
+- Tailwind CSS
