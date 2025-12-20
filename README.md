@@ -51,3 +51,7 @@ npm run dev
 - TypeScript
 - Zustand
 - Tailwind CSS
+
+## Live URL
+
+[text](https://flight-khaki.vercel.app/)
