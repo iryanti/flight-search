@@ -54,4 +54,4 @@ npm run dev
 
 ## Live URL
 
-[text](https://flight-khaki.vercel.app/)
+[Vercel](https://flight-khaki.vercel.app/)
