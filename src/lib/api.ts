@@ -1,7 +1,7 @@
 import type { Flight } from "@/types/flight";
 
 export async function fetchFlights(): Promise<Flight[]> {
-  const res = await fetch(`http://localhost:3000/mock/flights.json`, {
+  const res = await fetch(`/mock/flights.json`, {
     cache: "no-store",
   });
 
