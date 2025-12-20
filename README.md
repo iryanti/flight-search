@@ -41,6 +41,7 @@ npm run dev
 ## UI & UX
 
 - Responsive layout for desktop and mobile
+- Supports light and dark mode based on system preference
 - Mobile filter and sort using bottom sheet
 - Loading skeleton while fetching data
 - Error state with retry action

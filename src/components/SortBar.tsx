@@ -53,8 +53,11 @@ export default function SortBar({ mobile = false }: SortBarProps) {
         </div>
       ) : (
         <select
-          className="rounded-xl border bg-white px-3 py-2 text-sm"
-          style={{ borderColor: "var(--bc-border)" }}
+          className="rounded-xl border px-3 py-2 text-sm"
+          style={{
+            background: "var(--bc-card)",
+            borderColor: "var(--bc-border)",
+          }}
           value={sort}
           onChange={handleSelectChange}
         >

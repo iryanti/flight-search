@@ -85,8 +85,11 @@ export default function FilterSidebar({ compact }: { compact?: boolean }) {
 
   return (
     <div
-      className="rounded-2xl border bg-white shadow-sm p-4"
-      style={{ borderColor: "var(--bc-border)" }}
+      className="rounded-2xl border shadow-sm p-4"
+      style={{
+        background: "var(--bc-card)",
+        borderColor: "var(--bc-border)",
+      }}
     >
       <div className="flex items-center justify-between mb-3">
         <h2 className="font-semibold" style={{ color: "var(--bc-text)" }}>

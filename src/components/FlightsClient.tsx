@@ -98,9 +98,9 @@ export default function FlightsClient() {
   }
 
   const EmptyState = () => (
-    <div className="rounded-2xl border bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border p-6 shadow-sm">
       <div className="text-lg font-semibold">No flights found</div>
-      <div className="text-sm text-gray-600 mt-1">
+      <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
         Try adjusting your filters.
       </div>
 

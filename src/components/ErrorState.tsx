@@ -10,12 +10,12 @@ export default function ErrorState({
   title = "Something went wrong",
 }: ErrorStateProps) {
   return (
-    <div className="rounded-2xl border bg-white p-5 shadow-sm">
+    <div className="rounded-2xl border dark:bg-gray-800 dark:border-gray-700 p-5 shadow-sm">
       <div className="text-lg font-semibold text-red-600" role="alert">
         {title}
       </div>
 
-      <div className="text-sm text-gray-600 mt-1" aria-live="assertive">
+      <div className="text-sm text-gray-600 dark:text-gray-400 mt-1" aria-live="assertive">
         {message}
       </div>
 

@@ -14,7 +14,7 @@ export default function FlightCard({ flight }: FlightCardProps) {
 
   return (
     <div
-      className="rounded-2xl border bg-white shadow-sm overflow-hidden"
+      className="rounded-2xl border dark:bg-gray-800 dark:border-gray-700 shadow-sm"
       style={{ borderColor: "var(--bc-border)" }}
     >
       <div className="p-5 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
@@ -26,7 +26,7 @@ export default function FlightCard({ flight }: FlightCardProps) {
             height={44}
           />
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 items-start">
             <div
               className="text-lg font-semibold"
               style={{ color: "var(--bc-text)" }}

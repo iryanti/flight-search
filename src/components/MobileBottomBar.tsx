@@ -11,7 +11,7 @@ export default function MobileBottomBar({
 }: MobileBottomBarProps) {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden">
-      <div className="border-t bg-white">
+      <div className="border-t">
         <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-around">
           <button
             type="button"
