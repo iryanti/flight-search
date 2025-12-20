@@ -1,16 +1,27 @@
+export type SortKey = "recommendation" | "price_asc" | "duration_asc";
+
 export type Flight = {
-    id: string;
-    airlineName: string;
-    airLineCode: string;
-    flightNumber: string;
-    departureDate: string;
-    departureTime: string;
-    departureAirport:string;
-    arrivalDate: string;
-    arrivalTime: string;
-    arrivalAirport: string;
-    durationMinutes: number;
-    baggageLabel: string;
-    prince: number;
-    originalPrice: number;
-}
+  id: string;
+  airline: {
+    name: string;
+    code: string;
+  };
+  flightNumber: string;
+  departure: {
+    time: string;
+    airport: string;
+    date: string;
+  };
+  arrival: {
+    time: string;
+    airport: string;
+    date: string;
+  };
+  duration: number;
+  baggage: string;
+  price: {
+    amount: number;
+    currency: "IDR" | string;
+    original?: number;
+  };
+};

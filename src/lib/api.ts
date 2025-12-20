@@ -1,4 +1,4 @@
-import { Flight } from "@/types/flight";
+import type { Flight } from "@/types/flight";
 
 export async function fetchFlights(): Promise<Flight[]> {
   const res = await fetch(`http://localhost:3000/mock/flights.json`, {

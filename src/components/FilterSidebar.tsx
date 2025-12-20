@@ -1,148 +1,235 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef, useEffect } from "react";
 import { useFlightsStore } from "@/store/flightsStore";
 
-export default function FilterSidebar() {
+type AirlineItem = {
+  code: string;
+  name: string;
+  count: number;
+};
+
+export default function FilterSidebar({ compact }: { compact?: boolean }) {
   const {
     flights,
     selectedAirlines,
     toggleAirline,
+    setAllAirlines,
     resetFilters,
+    priceMin,
+    priceMax,
+    setPriceMin,
+    setPriceMax,
     maxDuration,
     setMaxDuration,
-    setAllAirlines,
   } = useFlightsStore();
 
-  const airlines = useMemo(() => {
-    const map = new Map<
-      string,
-      { code: string; name: string; count: number }
-    >();
+  const airlineOptions = useMemo<AirlineItem[]>(() => {
+    const result: AirlineItem[] = [];
 
-    flights.forEach((f: any) => {
-      const code = f.airline.code;
-      const name = f.airline.name;
+    flights.forEach((flight) => {
+      const existing = result.find(
+        (airline) => airline.code === flight.airline.code
+      );
 
-      const existing = map.get(code);
       if (existing) {
         existing.count += 1;
       } else {
-        map.set(code, { code, name, count: 1 });
+        result.push({
+          code: flight.airline.code,
+          name: flight.airline.name,
+          count: 1,
+        });
       }
     });
 
-    return Array.from(map.values()).sort((a, b) =>
-      a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
-    );
+    return result.sort((a, b) => (a.name > b.name ? 1 : -1));
   }, [flights]);
 
+  const allAirlineCodes = airlineOptions.map((airline) => airline.code);
+
+  const hasAirlines = airlineOptions.length > 0;
+
+  const isAllSelected =
+    hasAirlines && selectedAirlines.length === airlineOptions.length;
+
+  const isSomeSelected =
+    selectedAirlines.length > 0 &&
+    selectedAirlines.length < airlineOptions.length;
+
+  const selectAllCheckboxRef = useRef<HTMLInputElement>(null);
+
+  const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAllAirlines(e.target.checked ? allAirlineCodes : []);
+  };
+
+  const handlePriceMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPriceMin(value ? Number(value) : null);
+  };
+
+  const handlePriceMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPriceMax(value ? Number(value) : null);
+  };
+
+  const handleMaxDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setMaxDuration(value ? Number(value) : null);
+  };
+
+  useEffect(() => {
+    if (!selectAllCheckboxRef.current) return;
+    selectAllCheckboxRef.current.indeterminate = isSomeSelected;
+  }, [isSomeSelected]);
+
   return (
-    <aside className="w-full md:w-[320px]">
-      <div
-        className="rounded-2xl border bg-white p-4 shadow-sm"
-        style={{ borderColor: "var(--bc-border)" }}
-      >
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="font-semibold" style={{ color: "var(--bc-text)" }}>
-            Filters
-          </h2>
+    <div
+      className="rounded-2xl border bg-white shadow-sm p-4"
+      style={{ borderColor: "var(--bc-border)" }}
+    >
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="font-semibold" style={{ color: "var(--bc-text)" }}>
+          Filters
+        </h2>
 
-          <button
-            className="text-sm font-semibold cursor-pointer"
-            style={{ color: "var(--bc-primary)" }}
-            onClick={resetFilters}
-          >
-            Reset
-          </button>
+        <button
+          className="text-sm font-semibold cursor-pointer"
+          style={{ color: "var(--bc-primary)" }}
+          onClick={resetFilters}
+          type="button"
+        >
+          Reset
+        </button>
+      </div>
+
+      {/* Airlines */}
+      <div className="mt-4">
+        <div
+          className="text-sm font-semibold mb-2"
+          style={{ color: "var(--bc-text)" }}
+        >
+          Airlines
         </div>
 
-        <div className="mt-6">
-          <div
-            className="text-sm font-semibold mb-2"
-            style={{ color: "var(--bc-text)" }}
-          >
-            Max Duration (minutes)
+        {airlineOptions.length === 0 ? (
+          <div className="text-sm" style={{ color: "var(--bc-muted)" }}>
+            No airlines available
           </div>
-
-          <input
-            type="number"
-            min={0}
-            className="w-full rounded-lg border px-3 py-2 text-sm"
-            style={{ borderColor: "var(--bc-border)" }}
-            placeholder="e.g. 180"
-            value={maxDuration ?? ""}
-            onChange={(e) => {
-              const value = e.target.value;
-              setMaxDuration(value ? Number(value) : null);
-            }}
-          />
-        </div>
-
-        <div className="mt-4">
-          <div
-            className="text-sm font-semibold mb-2"
-            style={{ color: "var(--bc-text)" }}
-          >
-            Airlines
-          </div>
-
-          <label className="flex items-center gap-2 mb-2 font-medium">
-            <input
-              type="checkbox"
-              checked={
-                selectedAirlines.length > 0 &&
-                selectedAirlines.length === airlines.length
-              }
-              ref={(el) => {
-                if (!el) return;
-                el.indeterminate =
-                  selectedAirlines.length > 0 &&
-                  selectedAirlines.length < airlines.length;
-              }}
-              onChange={(e) => {
-                if (e.target.checked) {
-                  setAllAirlines(airlines.map((a) => a.code));
-                } else {
-                  setAllAirlines([]);
-                }
-              }}
-            />
-            <span>Select all</span>
-          </label>
-
+        ) : (
           <div
             className="space-y-2 text-sm"
             style={{ color: "var(--bc-muted)" }}
           >
-            {airlines.map((a) => {
-              const checked = selectedAirlines.includes(a.code);
+            {/* Select all */}
+            <label
+              htmlFor="select-all-airlines"
+              className="flex items-center justify-between gap-3 font-medium"
+            >
+              <span className="flex items-center gap-2">
+                <input
+                  id="select-all-airlines"
+                  ref={selectAllCheckboxRef}
+                  type="checkbox"
+                  checked={isAllSelected}
+                  onChange={handleSelectAllChange}
+                />
+                <span>Select all</span>
+              </span>
+
+              <span className="text-xs">{airlineOptions.length}</span>
+            </label>
+
+            <div className="h-px bg-gray-100" />
+
+            {/* Airline list */}
+            {airlineOptions.map((airline) => {
+              const isChecked = selectedAirlines.includes(airline.code);
+              const checkboxId = `airline-${airline.code}`;
+
               return (
                 <label
-                  key={a.code}
+                  key={airline.code}
+                  htmlFor={checkboxId}
                   className="flex items-center justify-between gap-3"
                 >
                   <span className="flex items-center gap-2">
                     <input
+                      id={checkboxId}
                       type="checkbox"
-                      checked={checked}
-                      onChange={() => toggleAirline(a.code)}
+                      checked={isChecked}
+                      onChange={() => toggleAirline(airline.code)}
                     />
-                    <span>{a.name}</span>
+                    <span>{airline.name}</span>
                   </span>
 
-                  <span
-                    className="text-xs"
-                    style={{ color: "var(--bc-muted)" }}
-                  >
-                    {a.count}
-                  </span>
+                  <span className="text-xs">{airline.count}</span>
                 </label>
               );
             })}
           </div>
+        )}
+      </div>
+
+      {/* Price */}
+      <div className="mt-6">
+        <div
+          className="text-sm font-semibold mb-2"
+          style={{ color: "var(--bc-text)" }}
+        >
+          Price
+        </div>
+
+        <div className="flex gap-2">
+          <input
+            type="number"
+            min={0}
+            className="w-1/2 rounded-lg border px-3 py-2 text-sm"
+            style={{ borderColor: "var(--bc-border)" }}
+            placeholder="Min"
+            value={priceMin ?? ""}
+            onChange={handlePriceMinChange}
+          />
+
+          <input
+            type="number"
+            min={0}
+            className="w-1/2 rounded-lg border px-3 py-2 text-sm"
+            style={{ borderColor: "var(--bc-border)" }}
+            placeholder="Max"
+            value={priceMax ?? ""}
+            onChange={handlePriceMaxChange}
+          />
+        </div>
+
+        <div className="mt-2 text-xs" style={{ color: "var(--bc-muted)" }}>
+          Enter amount in IDR
         </div>
       </div>
-    </aside>
+
+      {/* Duration */}
+      <div className="mt-6">
+        <div
+          className="text-sm font-semibold mb-2"
+          style={{ color: "var(--bc-text)" }}
+        >
+          Max Duration (minutes)
+        </div>
+
+        <input
+          type="number"
+          min={0}
+          className="w-full rounded-lg border px-3 py-2 text-sm"
+          style={{ borderColor: "var(--bc-border)" }}
+          placeholder="e.g. 180"
+          value={maxDuration ?? ""}
+          onChange={handleMaxDurationChange}
+        />
+
+        <div className="mt-2 text-xs" style={{ color: "var(--bc-muted)" }}>
+          Filter flights with duration ≤ max minutes
+        </div>
+      </div>
+    </div>
   );
 }

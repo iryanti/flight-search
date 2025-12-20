@@ -1,16 +1,14 @@
 import { create } from "zustand";
 import { fetchFlights as fetchFlightsApi } from "@/lib/api";
-
-type SortKey = "recommendation" | "price_asc" | "duration_asc";
+import type { Flight, SortKey } from "@/types/flight";
 
 type FlightsState = {
-  flights: any[];
+  flights: Flight[];
   loading: boolean;
   error: string | null;
 
   priceMin: number | null;
   priceMax: number | null;
-
   maxDuration: number | null;
 
   sort: SortKey;
@@ -18,13 +16,22 @@ type FlightsState = {
 
   fetchFlights: () => Promise<void>;
   toggleAirline: (code: string) => void;
+
   setSort: (sort: SortKey) => void;
-  setPriceMin: (v: number | null) => void;
-  setPriceMax: (v: number | null) => void;
-  setMaxDuration: (v: number | null) => void;
+  setPriceMin: (value: number | null) => void;
+  setPriceMax: (value: number | null) => void;
+  setMaxDuration: (value: number | null) => void;
   setAllAirlines: (codes: string[]) => void;
 
   resetFilters: () => void;
+};
+
+const DEFAULT_FILTERS = {
+  selectedAirlines: [] as string[],
+  sort: "recommendation" as SortKey,
+  priceMin: null as number | null,
+  priceMax: null as number | null,
+  maxDuration: null as number | null,
 };
 
 export const useFlightsStore = create<FlightsState>((set, get) => ({
@@ -32,50 +39,39 @@ export const useFlightsStore = create<FlightsState>((set, get) => ({
   loading: false,
   error: null,
 
-  selectedAirlines: [],
-  sort: "recommendation",
-
-  priceMin: null,
-  priceMax: null,
-
-  maxDuration: null,
+  ...DEFAULT_FILTERS,
 
   fetchFlights: async () => {
+    set({ loading: true, error: null });
+
     try {
-      set({ loading: true, error: null });
-      const data = await fetchFlightsApi();
-      set({ flights: data });
+      const flights = await fetchFlightsApi();
+      set({ flights });
     } catch {
       set({ error: "Failed to load flights" });
     } finally {
       set({ loading: false });
     }
   },
-  
+
   toggleAirline: (code) => {
-    const current = get().selectedAirlines;
-    const exists = current.includes(code);
+    const { selectedAirlines } = get();
+    const isSelected = selectedAirlines.includes(code);
+
     set({
-      selectedAirlines: exists
-        ? current.filter((x) => x !== code)
-        : [...current, code],
+      selectedAirlines: isSelected
+        ? selectedAirlines.filter((x) => x !== code)
+        : [...selectedAirlines, code],
     });
   },
 
   setSort: (sort) => set({ sort }),
 
-  setPriceMin: (v) => set({ priceMin: v }),
-  setPriceMax: (v) => set({ priceMax: v }),
+  setPriceMin: (value) => set({ priceMin: value }),
+  setPriceMax: (value) => set({ priceMax: value }),
+  setMaxDuration: (value) => set({ maxDuration: value }),
 
-  setMaxDuration: (v) => set({ maxDuration: v }),
   setAllAirlines: (codes) => set({ selectedAirlines: codes }),
 
-  resetFilters: () =>
-    set({
-      selectedAirlines: [],
-      sort: "recommendation",
-      priceMin: null,
-      priceMax: null,
-      maxDuration: null,
-    }),
+  resetFilters: () => set(DEFAULT_FILTERS),
 }));

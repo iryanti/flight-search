@@ -1,9 +1,16 @@
-export default function FlightCard({ f }: { f: any }) {
-  const logoUrl = `https://www.gstatic.com/flights/airline_logos/70px/${f.airline.code}.png`;
+import { Flight } from "@/types/flight";
 
-  const price = Number(f.price.amount || 0);
-  const original = Number(f.price.original || 0);
-  const saving = original > price ? original - price : 0;
+type FlightCardProps = {
+  flight: Flight;
+};
+
+export default function FlightCard({ flight }: FlightCardProps) {
+  const price = Number(flight.price.amount ?? 0);
+  const originalPrice = Number(flight.price.original ?? 0);
+  const durationMinutes = Number(flight.duration ?? 0);
+
+  const hasDiscount = originalPrice > price;
+  const discountAmount = hasDiscount ? originalPrice - price : 0;
 
   return (
     <div
@@ -12,30 +19,33 @@ export default function FlightCard({ f }: { f: any }) {
     >
       <div className="p-5 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="flex items-start gap-4 min-w-[260px]">
-          <img src={logoUrl} alt={f.airline.name} width={44} height={44} />
+          <img
+            src={`https://www.gstatic.com/flights/airline_logos/70px/${flight.airline.code}.png`}
+            alt={flight.airline.name}
+            width={44}
+            height={44}
+          />
 
           <div className="flex flex-col gap-2">
             <div
               className="text-lg font-semibold"
               style={{ color: "var(--bc-text)" }}
             >
-              {f.airline.name}
+              {flight.airline.name}{" "}
               <span className="text-sm" style={{ color: "var(--bc-muted)" }}>
-                ({f.flightNumber})
+                ({flight.flightNumber})
               </span>
             </div>
 
-            <div className="flex items-center gap-2">
-              <span
-                className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm border"
-                style={{
-                  borderColor: "var(--bc-border)",
-                  color: "var(--bc-text)",
-                }}
-              >
-                🧳 {f.baggage ?? "0kg"}
-              </span>
-            </div>
+            <span
+              className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm border"
+              style={{
+                borderColor: "var(--bc-border)",
+                color: "var(--bc-text)",
+              }}
+            >
+              🧳 {flight.baggage || "0kg"}
+            </span>
           </div>
         </div>
 
@@ -45,10 +55,10 @@ export default function FlightCard({ f }: { f: any }) {
               className="text-2xl font-semibold"
               style={{ color: "var(--bc-text)" }}
             >
-              {f.departure.time}
+              {flight.departure.time}
             </div>
             <div className="font-semibold" style={{ color: "var(--bc-muted)" }}>
-              {f.departure.airport}
+              {flight.departure.airport}
             </div>
           </div>
 
@@ -57,7 +67,7 @@ export default function FlightCard({ f }: { f: any }) {
               className="text-sm font-semibold"
               style={{ color: "var(--bc-muted)" }}
             >
-              {f.duration}m
+              {durationMinutes}m
             </div>
 
             <div className="flex items-center justify-center my-2">
@@ -72,16 +82,17 @@ export default function FlightCard({ f }: { f: any }) {
               className="text-2xl font-semibold"
               style={{ color: "var(--bc-text)" }}
             >
-              {f.arrival.time}
+              {flight.arrival.time}
             </div>
             <div className="font-semibold" style={{ color: "var(--bc-muted)" }}>
-              {f.arrival.airport}
+              {flight.arrival.airport}
             </div>
           </div>
         </div>
 
+        {/* Price */}
         <div className="min-w-[240px] flex flex-col items-end gap-3">
-          {saving > 0 && (
+          {hasDiscount && (
             <div
               className="text-sm font-semibold"
               style={{ color: "var(--bc-muted)" }}
@@ -95,7 +106,7 @@ export default function FlightCard({ f }: { f: any }) {
               >
                 %
               </span>
-              Save Rp {saving.toLocaleString("id-ID")} / pax
+              Save Rp {discountAmount.toLocaleString("id-ID")} / pax
             </div>
           )}
 
@@ -113,18 +124,20 @@ export default function FlightCard({ f }: { f: any }) {
                 /pax
               </span>
             </div>
-            {original > price && (
+
+            {hasDiscount && (
               <div
                 className="text-sm line-through"
                 style={{ color: "var(--bc-muted)" }}
               >
-                Rp {original.toLocaleString("id-ID")}
+                Rp {originalPrice.toLocaleString("id-ID")}
               </div>
             )}
           </div>
         </div>
+
         <button
-          className="px-6 py-3 rounded-xl text-white font-semibold w-full md:w-[180px] cursor-pointer"
+          className="px-6 py-3 rounded-xl text-white font-semibold w-full md:w-[180px]"
           style={{ background: "var(--bc-primary)" }}
         >
           Choose
