@@ -22,6 +22,7 @@ export default function FlightCard({
   return (
     <div
       className={`
+    min-h-[160px]
     p-5 flex flex-col gap-4
     md:flex-row md:flex-wrap md:items-center md:justify-between
     rounded-2xl border
