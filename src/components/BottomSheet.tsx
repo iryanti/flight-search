@@ -21,7 +21,7 @@ export default function BottomSheet({
         aria-label="Close"
       />
 
-      <div className="absolute left-0 right-0 bottom-0 dark:bg-gray-900 rounded-t-2xl shadow-lg p-4">
+      <div className="absolute left-0 right-0 bottom-0 bg-white dark:bg-gray-900 rounded-t-2xl shadow-lg p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="font-semibold">{title}</div>
           <button className="text-sm font-semibold" onClick={onClose}>

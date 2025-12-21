@@ -12,6 +12,7 @@ import ErrorState from "./ErrorState";
 import { Flight } from "@/types/flight";
 
 export default function FlightsClient() {
+  const [selectedFlightId, setSelectedFlightId] = useState<string | null>(null);
   const [openFilter, setOpenFilter] = useState(false);
   const [openSort, setOpenSort] = useState(false);
   const {
@@ -130,7 +131,12 @@ export default function FlightsClient() {
           ) : (
             <div className="space-y-4">
               {filteredFlights.map((flight: Flight) => (
-                <FlightCard key={flight.id} flight={flight} />
+                <FlightCard
+                  key={flight.id}
+                  flight={flight}
+                  isSelected={selectedFlightId === flight.id}
+                  onSelect={() => setSelectedFlightId(flight.id)}
+                />
               ))}
             </div>
           )}
@@ -151,7 +157,12 @@ export default function FlightsClient() {
         ) : (
           <div className="space-y-3">
             {filteredFlights.map((flight: Flight) => (
-              <FlightCard key={flight.id} flight={flight} />
+              <FlightCard
+                key={flight.id}
+                flight={flight}
+                isSelected={selectedFlightId === flight.id}
+                onSelect={() => setSelectedFlightId(flight.id)}
+              />
             ))}
           </div>
         )}
